@@ -1,0 +1,205 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  width: 228px;
+  flex-shrink: 0;
+  background: var(--color-sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.sidebarBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 1.25rem 1rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 0.5rem;
+}
+.brandIcon {
+  width: 36px;
+  height: 36px;
+  background: var(--color-accent);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+.brandName { font-size: 14px; font-weight: 600; color: #ffffff; }
+.brandSub { font-size: 10px; color: #8fa3bf; }
+
+.nav { flex: 1; padding: 0.5rem 0.75rem; display: flex; flex-direction: column; gap: 2px; }
+.navSection {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #5a7499;
+  padding: 8px 8px 4px;
+  margin-top: 4px;
+}
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--color-sidebar-text);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background var(--transition), color var(--transition);
+  text-decoration: none;
+}
+.navItem:hover { background: var(--color-sidebar-hover); color: #ffffff; }
+.navItemActive {
+  background: var(--color-sidebar-active) !important;
+  color: #ffffff !important;
+}
+
+.sidebarFooter {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.userInfo { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.userAvatar {
+  width: 32px;
+  height: 32px;
+  background: var(--color-accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  flex-shrink: 0;
+}
+.userName { font-size: 12px; font-weight: 500; color: #c5cfe0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.userRole { font-size: 10px; color: #5a7499; }
+.logoutBtn {
+  background: none;
+  border: none;
+  color: #5a7499;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: 6px;
+  transition: color var(--transition), background var(--transition);
+}
+.logoutBtn:hover { color: #ef4444; background: rgba(239,68,68,0.1); }
+
+/* ─── Main ─── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+.topbar {
+  height: 56px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  flex-shrink: 0;
+}
+.menuBtn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  padding: 6px;
+  border-radius: 6px;
+}
+.topbarRight { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+.notifBtn {
+  position: relative;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background var(--transition);
+}
+.notifBtn:hover { background: #f1f5f9; }
+.notifDot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 1.5px solid white;
+}
+.topbarUser {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+}
+.topbarAvatar {
+  width: 30px;
+  height: 30px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+}
+.topbarName { font-size: 13px; }
+
+.content { flex: 1; overflow-y: auto; padding: 1.5rem; }
+
+/* ─── Mobile overlay ─── */
+.mobileOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+}
+.mobileSidebar {
+  width: 228px;
+  height: 100%;
+  background: var(--color-sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #8fa3bf;
+  padding: 4px;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .menuBtn { display: flex; }
+  .mobileOverlay { display: block; }
+  .topbarName { display: none; }
+  .content { padding: 1rem; }
+}
