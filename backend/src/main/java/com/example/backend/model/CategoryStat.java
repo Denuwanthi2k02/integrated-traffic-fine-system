@@ -10,16 +10,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users")
+@Table(name = "category_stats")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class CategoryStat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String password;
     private String name;
-    private String role;
+    private Long count;
+    private Long revenue;
+    private Long fineAmount;
 }
