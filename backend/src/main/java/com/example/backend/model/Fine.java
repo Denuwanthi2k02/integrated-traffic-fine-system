@@ -1,16 +1,24 @@
-package com.example.backend.model; // Must be under com.example.backend
+package com.example.backend.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "transactions")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Fine {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    private String referenceNumber;
+    private String id;
     private String category;
-    private Double amount;
-}
+    private String district;
+    private Integer amount;
+    private String date;
+    private String status;
+    private String officer;
+} 

@@ -10,16 +10,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users")
+@Table(name = "summary")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Summary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String password;
-    private String name;
-    private String role;
+    private Long totalRevenue;
+    private Long totalFines;
+    private Long pendingFines;
+    private Long settledFines;
+    private String topViolation;
+    private Double revenueGrowth;
+    private Double fineGrowth;
 }

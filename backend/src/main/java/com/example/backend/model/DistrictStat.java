@@ -10,16 +10,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users")
+@Table(name = "district_stats")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class DistrictStat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String password;
     private String name;
-    private String role;
+    private Long revenue;
+    private Long fines;
+    private Long settled;
+    private Long pending;
 }
