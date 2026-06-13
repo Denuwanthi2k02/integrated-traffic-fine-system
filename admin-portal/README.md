@@ -10,7 +10,7 @@ cp .env.example .env
 npm run dev
 ```
 
-Open http://localhost:5173
+Open http://localhost:5174
 
 **Demo login:** `admin` / `admin123`
 
