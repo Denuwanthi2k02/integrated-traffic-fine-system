@@ -46,8 +46,34 @@ public class DatabaseSeeder {
 
     @EventListener(ApplicationReadyEvent.class)
     public void seed() {
+        // Seed Users (Admin + Driver users)
         if (userRepository.count() == 0) {
-            userRepository.save(new User(null, "admin", "admin123", "Admin User", "ADMIN"));
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setEmail("admin@police.gov.lk");
+            admin.setPassword("admin123");
+            admin.setName("Admin User");
+            admin.setRole("admin");
+            userRepository.save(admin);
+
+            // Sample driver users
+            User driver1 = new User();
+            driver1.setEmail("driver@example.com");
+            driver1.setPassword("password123");
+            driver1.setName("John Perera");
+            driver1.setPhone("0771234567");
+            driver1.setLicenseNumber("DL-20210045");
+            driver1.setRole("driver");
+            userRepository.save(driver1);
+
+            User driver2 = new User();
+            driver2.setEmail("test@example.com");
+            driver2.setPassword("password123");
+            driver2.setName("Test Driver");
+            driver2.setPhone("0772345678");
+            driver2.setLicenseNumber("DL-20210046");
+            driver2.setRole("driver");
+            userRepository.save(driver2);
         }
 
         if (summaryRepository.count() == 0) {
@@ -88,14 +114,67 @@ public class DatabaseSeeder {
             ));
         }
 
+        // Seed Fines with driver-relevant information
         if (fineRepository.count() == 0) {
-            fineRepository.saveAll(List.of(
-                    new Fine("TF-20260611-4821", "Speeding", "Colombo", 3000, "2026-06-11", "paid", "SI Perera"),
-                    new Fine("TF-20260611-4820", "No License", "Gampaha", 5000, "2026-06-11", "paid", "SGT Fernando"),
-                    new Fine("TF-20260611-4819", "Illegal Parking", "Kandy", 1500, "2026-06-11", "pending", "PC Silva"),
-                    new Fine("TF-20260610-4818", "Drunk Driving", "Colombo", 25000, "2026-06-10", "paid", "SI Jayawardena"),
-                    new Fine("TF-20260610-4817", "Speeding", "Galle", 3000, "2026-06-10", "pending", "SGT Wijeratne")
-            ));
+            Fine fine1 = new Fine();
+            fine1.setReferenceNumber("SLP-882291");
+            fine1.setCategory("SPEED");
+            fine1.setDistrict("Colombo");
+            fine1.setAmount(3000);
+            fine1.setDate("2026-06-11");
+            fine1.setStatus("PENDING");
+            fine1.setOfficer("SI Perera");
+            fine1.setLicensePlate("WP ABC 1234");
+            fine1.setLicenseNumber("DL-20210045");
+            fine1.setDriverName("John Perera");
+            fine1.setViolationDetails("Exceeded speed limit by 25 km/h");
+            fine1.setPaymentDeadline("2026-07-11");
+            fineRepository.save(fine1);
+
+            Fine fine2 = new Fine();
+            fine2.setReferenceNumber("SLP-882290");
+            fine2.setCategory("DRUNK");
+            fine2.setDistrict("Gampaha");
+            fine2.setAmount(25000);
+            fine2.setDate("2026-06-10");
+            fine2.setStatus("PENDING");
+            fine2.setOfficer("SGT Fernando");
+            fine2.setLicensePlate("WP DEF 5678");
+            fine2.setLicenseNumber("DL-20210046");
+            fine2.setDriverName("Test Driver");
+            fine2.setViolationDetails("Suspected driving under influence");
+            fine2.setPaymentDeadline("2026-07-10");
+            fineRepository.save(fine2);
+
+            Fine fine3 = new Fine();
+            fine3.setReferenceNumber("SLP-882289");
+            fine3.setCategory("LICENSE");
+            fine3.setDistrict("Kandy");
+            fine3.setAmount(5000);
+            fine3.setDate("2026-06-09");
+            fine3.setStatus("PENDING");
+            fine3.setOfficer("PC Silva");
+            fine3.setLicensePlate("WP GHI 9012");
+            fine3.setLicenseNumber("DL-20210047");
+            fine3.setDriverName("Jane Smith");
+            fine3.setViolationDetails("Driving with expired license");
+            fine3.setPaymentDeadline("2026-07-09");
+            fineRepository.save(fine3);
+
+            Fine fine4 = new Fine();
+            fine4.setReferenceNumber("SLP-882288");
+            fine4.setCategory("SPEED");
+            fine4.setDistrict("Colombo");
+            fine4.setAmount(3000);
+            fine4.setDate("2026-06-08");
+            fine4.setStatus("PAID");
+            fine4.setOfficer("SI Jayawardena");
+            fine4.setLicensePlate("WP JKL 3456");
+            fine4.setLicenseNumber("DL-20210048");
+            fine4.setDriverName("Mike Johnson");
+            fine4.setViolationDetails("Speeding in residential area");
+            fine4.setPaymentDeadline("2026-07-08");
+            fineRepository.save(fine4);
         }
     }
 }

@@ -21,7 +21,11 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/admin/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/admin/**").permitAll()
+                .requestMatchers("/api/driver/login").permitAll()
+                .requestMatchers("/api/driver/register").permitAll()
+                .requestMatchers("/api/driver/fines/**").permitAll()
                 .anyRequest().authenticated()
             );
         return http.build();
@@ -39,3 +43,4 @@ public class SecurityConfig {
         return source;
     }
 }
+

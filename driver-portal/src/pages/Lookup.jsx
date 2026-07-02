@@ -11,10 +11,10 @@ export default function Lookup() {
   const handleSearch = async (e) => {
     e.preventDefault();
     try {
-      const res = await API.get(`/fines/search?ref=${ref}&cat=${cat}`);
+      const res = await API.get(`/driver/fines/search?ref=${ref}&cat=${cat}`);
       navigate('/payment', { state: { fine: res.data } });
     } catch (err) {
-      alert("Fine not found. Check details.");
+      alert("Fine not found. Check reference number and category.");
     }
   };
 

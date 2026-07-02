@@ -19,8 +19,11 @@ export default function Login() {
     setError(''); 
     
     try {
-      const res = await API.post('/auth/login', { email, password });
-      localStorage.setItem('token', res.data.token); 
+      const res = await API.post('/driver/login', { email, password });
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('userId', res.data.id);
+      localStorage.setItem('userName', res.data.name);
+      localStorage.setItem('licenseNumber', res.data.licenseNumber);
       navigate('/');
     } catch (err) {
       setError("Invalid email or password. Please try again.");

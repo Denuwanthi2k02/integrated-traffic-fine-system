@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import API from '../services/api';
-import { Mail, Lock, User, AlertCircle, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, Phone, AlertCircle, Loader2, FileText } from 'lucide-react';
 
 export default function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [licenseNumber, setLicenseNumber] = useState('');
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -18,12 +20,17 @@ export default function Register() {
     setError(''); 
     
     try {
-      // Calls your backend to create a user
-      await API.post('/auth/register', { name, email, password });
+      await API.post('/driver/register', { 
+        name, 
+        email, 
+        password,
+        phone,
+        licenseNumber
+      });
       alert("Registration successful! Please login.");
       navigate('/login');
     } catch (err) {
-      setError("Failed to register. Email might already exist.");
+      setError(err.response?.data?.message || "Failed to register. Email might already exist.");
     } finally {
       setLoading(false);
     }
@@ -69,6 +76,32 @@ export default function Register() {
               required
               className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-700" 
               onChange={e => setEmail(e.target.value)} 
+            />
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <Phone size={20} />
+            </div>
+            <input 
+              type="tel" 
+              placeholder="Phone Number" 
+              required
+              className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-700" 
+              onChange={e => setPhone(e.target.value)} 
+            />
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <FileText size={20} />
+            </div>
+            <input 
+              type="text" 
+              placeholder="License Number (e.g., DL-20210045)" 
+              required
+              className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-700" 
+              onChange={e => setLicenseNumber(e.target.value)} 
             />
           </div>
 
