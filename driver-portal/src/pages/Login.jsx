@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import API from '../services/api';
-import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, UserCircle } from 'lucide-react';
+// 1. IMPORT YOUR LOGO HERE:
+// import logoImg from '../assets/logo.svg'; 
+import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -33,83 +35,101 @@ export default function Login() {
   };
 
   return (
-    // Added wrapper for perfect mobile responsiveness
-    <div className="w-full px-4 flex justify-center items-center my-10">
-      <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-[2rem] shadow-2xl border border-slate-100">
+    <div className="min-h-[85vh] w-full px-4 flex justify-center items-center my-6">
+      <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-2xl shadow-xl border border-slate-100 transition-all duration-300">
         
+        {/* Header & Logo Section */}
         <div className="text-center mb-8">
-          <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-900">
-            <UserCircle size={40} strokeWidth={1.5} />
+          <div className="flex items-center justify-center mb-4">
+            {/* 2. LOGO CONTAINER */}
+            {/* If using the imported logoImg, replace the placeholder <img> with: <img src={logoImg} alt="Company Logo" className="h-12 w-auto object-contain" /> */}
+            <img 
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsdoS8eTwMtv6B5qunA2ZUU6DqRi1Pn5t2NzN1qVeyeA&s=10" 
+              alt="Logo" 
+              className="h-12 w-auto object-contain rounded-lg"
+             
+            />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-800">Driver Login</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">Driver Login</h2>
           <p className="text-slate-500 mt-2 text-sm">Access your portal to view and settle fines</p>
         </div>
 
+        {/* Error Alert */}
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-2xl mb-6 flex items-center gap-3 text-sm font-medium border border-red-100 animate-pulse">
-            <AlertCircle size={20} className="shrink-0" />
+          <div className="bg-rose-50 text-rose-700 p-3.5 rounded-xl mb-6 flex items-start gap-3 text-sm font-medium border border-rose-100/80 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+            <AlertCircle size={18} className="shrink-0 mt-0.5 text-rose-500" />
             <p>{error}</p>
           </div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleLogin} className="space-y-5">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-              <Mail size={20} />
+          {/* Email Input */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-slate-600 tracking-wide uppercase">Email Address</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                <Mail size={18} />
+              </div>
+              <input 
+                type="email" 
+                placeholder="name@example.com" 
+                required
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder:text-slate-400 font-normal outline-none focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/5 transition-all duration-200" 
+                onChange={e => setEmail(e.target.value)} 
+              />
             </div>
-            <input 
-              type="email" 
-              placeholder="Email Address" 
-              required
-              className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-700" 
-              onChange={e => setEmail(e.target.value)} 
-            />
           </div>
 
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-              <Lock size={20} />
+          {/* Password Input */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-slate-600 tracking-wide uppercase">Password</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                <Lock size={18} />
+              </div>
+              <input 
+                type={showPassword ? "text" : "password"} 
+                placeholder="••••••••" 
+                required
+                className="w-full pl-11 pr-11 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder:text-slate-400 font-normal outline-none focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/5 transition-all duration-200" 
+                onChange={e => setPassword(e.target.value)} 
+              />
+              <button 
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
-            <input 
-              type={showPassword ? "text" : "password"} 
-              placeholder="Password" 
-              required
-              className="w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-700" 
-              onChange={e => setPassword(e.target.value)} 
-            />
-            <button 
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
           </div>
 
-          <div className="flex justify-end">
-              {/* Changed to Link */}
-              <Link to="/forgot-password" className="text-sm font-bold text-blue-600 hover:text-blue-800 transition">
-                Forgot Password?
-              </Link>
+          {/* Forgot Password Link */}
+          <div className="flex justify-end pt-0.5">
+            <Link to="/forgot-password" className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors">
+              Forgot Password?
+            </Link>
           </div>
 
+          {/* Submit Button */}
           <button 
             type="submit"
             disabled={loading}
-            className="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold text-lg hover:bg-slate-800 hover:shadow-lg transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+            className="w-full mt-2 bg-blue-600 text-white py-3.5 px-4 rounded-xl font-semibold text-sm hover:bg-blue-700 shadow-md shadow-blue-600/10 hover:shadow-lg hover:shadow-blue-600/10 transition-all duration-200 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed disabled:pointer-events-none flex justify-center items-center gap-2"
           >
             {loading ? (
-              <><Loader2 className="animate-spin" size={24} /> Signing In...</>
+              <><Loader2 className="animate-spin text-white" size={18} /> Signing In...</>
             ) : (
-              "Sign In"
+              "Sign In to Account"
             )}
           </button>
         </form>
 
-        <div className="mt-8 text-center text-sm font-medium text-slate-500">
-          Don't have an account?{' '}
-          {/* Working Register Link */}
-          <Link to="/register" className="text-blue-600 font-bold hover:underline">
+        {/* Footer/Register Link */}
+        <div className="mt-8 pt-6 text-center text-xs font-medium text-slate-500 border-t border-slate-100">
+          Don't have an account yet?{' '}
+          <Link to="/register" className="text-blue-600 font-semibold hover:text-blue-700 hover:underline transition-colors">
             Register here
           </Link>
         </div>

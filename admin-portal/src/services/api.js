@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8081/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 const api = axios.create({ baseURL: BASE_URL });
 
 api.interceptors.request.use((config) => {
@@ -31,6 +31,12 @@ export const getMonthlyTrend = async (filters = {}) => {
 
 export const getRecentTransactions = async (filters = {}) => {
   const response = await api.get("/admin/transactions", { params: filters });
+  return response.data;
+};
+
+// NEW: Function to issue a new fine
+export const createFine = async (fineData) => {
+  const response = await api.post("/admin/fines", fineData);
   return response.data;
 };
 

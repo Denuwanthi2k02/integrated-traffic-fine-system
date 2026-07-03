@@ -1,8 +1,10 @@
 package com.example.backend.controller;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.example.backend.model.CategoryStat;
 import com.example.backend.model.DistrictStat;
@@ -16,13 +18,17 @@ import com.example.backend.repository.MonthlyTrendRepository;
 import com.example.backend.repository.SummaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/admin")
+@CrossOrigin(origins = "*")
 public class AdminController {
 
     @Autowired
@@ -81,10 +87,46 @@ public class AdminController {
     }
 
     @GetMapping("/transactions")
-    public List<Fine> getTransactions(@RequestParam(required = false) String district) {
-        if (district == null || district.equalsIgnoreCase("all")) {
-            return fineRepository.findAllByOrderByDateDesc();
+    public List<Fine> getTransactions(
+            @RequestParam(required = false, defaultValue = "all") String district,
+            @RequestParam(required = false, defaultValue = "all") String status,
+            @RequestParam(required = false, defaultValue = "all") String category,
+            @RequestParam(required = false, defaultValue = "all") String month) {
+        
+        List<Fine> fines;
+        
+        if (district == null || district.trim().isEmpty() || district.equalsIgnoreCase("all")) {
+            fines = fineRepository.findAllByOrderByDateDesc();
+        } else {
+            fines = fineRepository.findByDistrictIgnoreCaseOrderByDateDesc(district);
         }
-        return fineRepository.findByDistrictIgnoreCaseOrderByDateDesc(district);
+
+        return fines.stream()
+                .filter(fine -> status == null || "all".equalsIgnoreCase(status) || 
+                        (fine.getStatus() != null && fine.getStatus().equalsIgnoreCase(status)))
+                .filter(fine -> category == null || "all".equalsIgnoreCase(category) || 
+                        (fine.getCategory() != null && fine.getCategory().equalsIgnoreCase(category)))
+                .filter(fine -> month == null || "all".equalsIgnoreCase(month) || 
+                        (fine.getDate() != null && fine.getDate().startsWith(month)))
+                .collect(Collectors.toList());
+    }
+
+    // NEW: Endpoint to Issue a New Fine
+    @PostMapping("/fines")
+    public Fine issueFine(@RequestBody Fine fine) {
+        // Automatically set status to PENDING for new fines
+        fine.setStatus("PENDING");
+        
+        // If date is empty, set to today's date
+        if (fine.getDate() == null || fine.getDate().isEmpty()) {
+            fine.setDate(LocalDate.now().toString());
+        }
+
+        // Generate a 14-day payment deadline if not provided
+        if (fine.getPaymentDeadline() == null || fine.getPaymentDeadline().isEmpty()) {
+            fine.setPaymentDeadline(LocalDate.now().plusDays(14).toString());
+        }
+
+        return fineRepository.save(fine);
     }
 }
