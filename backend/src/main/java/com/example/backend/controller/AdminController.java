@@ -1,10 +1,17 @@
 package com.example.backend.controller;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.model.CategoryStat;
 import com.example.backend.model.DistrictStat;
@@ -16,35 +23,17 @@ import com.example.backend.repository.DistrictStatRepository;
 import com.example.backend.repository.FineRepository;
 import com.example.backend.repository.MonthlyTrendRepository;
 import com.example.backend.repository.SummaryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/admin")
 @CrossOrigin(origins = "*")
 public class AdminController {
 
-    @Autowired
-    private SummaryRepository summaryRepository;
-
-    @Autowired
-    private DistrictStatRepository districtStatRepository;
-
-    @Autowired
-    private CategoryStatRepository categoryStatRepository;
-
-    @Autowired
-    private MonthlyTrendRepository monthlyTrendRepository;
-
-    @Autowired
-    private FineRepository fineRepository;
+    @Autowired private SummaryRepository summaryRepository;
+    @Autowired private DistrictStatRepository districtStatRepository;
+    @Autowired private CategoryStatRepository categoryStatRepository;
+    @Autowired private MonthlyTrendRepository monthlyTrendRepository;
+    @Autowired private FineRepository fineRepository;
 
     @GetMapping("/summary")
     public Map<String, Object> getSummary() {
@@ -75,17 +64,14 @@ public class AdminController {
     @GetMapping("/monthly")
     public Map<String, Object> getMonthlyTrend() {
         List<MonthlyTrend> trends = monthlyTrendRepository.findAll(Sort.by("monthOrder"));
-        List<String> labels = trends.stream().map(MonthlyTrend::getMonth).toList();
-        List<Long> revenue = trends.stream().map(MonthlyTrend::getRevenue).toList();
-        List<Long> fines = trends.stream().map(MonthlyTrend::getFines).toList();
-
         return Map.of(
-                "labels", labels,
-                "revenue", revenue,
-                "fines", fines
+            "labels", trends.stream().map(MonthlyTrend::getMonth).toList(),
+            "revenue", trends.stream().map(MonthlyTrend::getRevenue).toList(),
+            "fines", trends.stream().map(MonthlyTrend::getFines).toList()
         );
     }
 
+    // THIS IS THE CRITICAL PART FOR YOUR TRANSACTIONS
     @GetMapping("/transactions")
     public List<Fine> getTransactions(
             @RequestParam(required = false, defaultValue = "all") String district,
@@ -93,40 +79,15 @@ public class AdminController {
             @RequestParam(required = false, defaultValue = "all") String category,
             @RequestParam(required = false, defaultValue = "all") String month) {
         
-        List<Fine> fines;
-        
-        if (district == null || district.trim().isEmpty() || district.equalsIgnoreCase("all")) {
-            fines = fineRepository.findAllByOrderByDateDesc();
-        } else {
-            fines = fineRepository.findByDistrictIgnoreCaseOrderByDateDesc(district);
-        }
+        // 1. Fetch from DB
+        List<Fine> fines = fineRepository.findAllByOrderByDateDesc();
 
+        // 2. Apply filters in memory
         return fines.stream()
-                .filter(fine -> status == null || "all".equalsIgnoreCase(status) || 
-                        (fine.getStatus() != null && fine.getStatus().equalsIgnoreCase(status)))
-                .filter(fine -> category == null || "all".equalsIgnoreCase(category) || 
-                        (fine.getCategory() != null && fine.getCategory().equalsIgnoreCase(category)))
-                .filter(fine -> month == null || "all".equalsIgnoreCase(month) || 
-                        (fine.getDate() != null && fine.getDate().startsWith(month)))
+                .filter(f -> district.equals("all") || f.getDistrict().equalsIgnoreCase(district))
+                .filter(f -> status.equals("all") || f.getStatus().equalsIgnoreCase(status))
+                .filter(f -> category.equals("all") || f.getCategory().equalsIgnoreCase(category))
+                .filter(f -> month.equals("all") || (f.getDate() != null && f.getDate().startsWith(month)))
                 .collect(Collectors.toList());
-    }
-
-    // NEW: Endpoint to Issue a New Fine
-    @PostMapping("/fines")
-    public Fine issueFine(@RequestBody Fine fine) {
-        // Automatically set status to PENDING for new fines
-        fine.setStatus("PENDING");
-        
-        // If date is empty, set to today's date
-        if (fine.getDate() == null || fine.getDate().isEmpty()) {
-            fine.setDate(LocalDate.now().toString());
-        }
-
-        // Generate a 14-day payment deadline if not provided
-        if (fine.getPaymentDeadline() == null || fine.getPaymentDeadline().isEmpty()) {
-            fine.setPaymentDeadline(LocalDate.now().plusDays(14).toString());
-        }
-
-        return fineRepository.save(fine);
     }
 }
