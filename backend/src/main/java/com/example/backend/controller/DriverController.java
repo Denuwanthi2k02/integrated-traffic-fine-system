@@ -3,15 +3,22 @@ package com.example.backend.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.example.backend.model.Fine;
 import com.example.backend.model.User;
 import com.example.backend.repository.FineRepository;
 import com.example.backend.repository.UserRepository;
-import com.example.backend.service.SmsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/driver")
@@ -23,10 +30,6 @@ public class DriverController {
 
     @Autowired
     private FineRepository fineRepository;
-
-    // INJECT THE SMS SERVICE HERE
-    @Autowired
-    private SmsService smsService;
 
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody Map<String, String> credentials) {
@@ -91,7 +94,6 @@ public class DriverController {
         return fineRepository.findByLicenseNumber(licenseNumber);
     }
 
-    // UPDATED PAYMENT ENDPOINT WITH SMS INTEGRATION
     @PostMapping("/fines/{id}/pay")
     public Map<String, Object> payFine(
             @PathVariable Long id,
@@ -103,12 +105,6 @@ public class DriverController {
         // 1. Update fine status to PAID
         fine.setStatus("PAID");
         fineRepository.save(fine);
-
-        // 2. Trigger SMS Notification to Officer via Service Architecture
-        String officerPhone = "+94710000000"; // Mock officer phone
-        String message = "Traffic Fine Ref: " + fine.getReferenceNumber() + 
-                         " has been successfully PAID by driver. You may return the license.";
-        smsService.sendSms(officerPhone, message);
 
         return Map.of(
                 "message", "Payment successful",

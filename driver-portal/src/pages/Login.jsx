@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import API from '../services/api';
-// 1. IMPORT YOUR LOGO HERE:
-// import logoImg from '../assets/logo.svg'; 
+ 
 import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function Login() {
@@ -38,11 +37,10 @@ export default function Login() {
     <div className="min-h-[85vh] w-full px-4 flex justify-center items-center my-6">
       <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-2xl shadow-xl border border-slate-100 transition-all duration-300">
         
-        {/* Header & Logo Section */}
+       
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            {/* 2. LOGO CONTAINER */}
-            {/* If using the imported logoImg, replace the placeholder <img> with: <img src={logoImg} alt="Company Logo" className="h-12 w-auto object-contain" /> */}
+           
             <img 
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsdoS8eTwMtv6B5qunA2ZUU6DqRi1Pn5t2NzN1qVeyeA&s=10" 
               alt="Logo" 
@@ -54,7 +52,7 @@ export default function Login() {
           <p className="text-slate-500 mt-2 text-sm">Access your portal to view and settle fines</p>
         </div>
 
-        {/* Error Alert */}
+       
         {error && (
           <div className="bg-rose-50 text-rose-700 p-3.5 rounded-xl mb-6 flex items-start gap-3 text-sm font-medium border border-rose-100/80 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
             <AlertCircle size={18} className="shrink-0 mt-0.5 text-rose-500" />
@@ -62,7 +60,7 @@ export default function Login() {
           </div>
         )}
 
-        {/* Form */}
+      
         <form onSubmit={handleLogin} className="space-y-5">
           {/* Email Input */}
           <div className="space-y-1.5">
@@ -81,7 +79,7 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Password Input */}
+         
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-slate-600 tracking-wide uppercase">Password</label>
             <div className="relative">
@@ -105,14 +103,14 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Forgot Password Link */}
+        
           <div className="flex justify-end pt-0.5">
             <Link to="/forgot-password" className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors">
               Forgot Password?
             </Link>
           </div>
 
-          {/* Submit Button */}
+        
           <button 
             type="submit"
             disabled={loading}
@@ -126,7 +124,7 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Footer/Register Link */}
+        
         <div className="mt-8 pt-6 text-center text-xs font-medium text-slate-500 border-t border-slate-100">
           Don't have an account yet?{' '}
           <Link to="/register" className="text-blue-600 font-semibold hover:text-blue-700 hover:underline transition-colors">
