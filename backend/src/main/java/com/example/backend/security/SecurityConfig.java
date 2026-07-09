@@ -26,6 +26,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/driver/login").permitAll()
                 .requestMatchers("/api/driver/register").permitAll()
                 .requestMatchers("/api/driver/fines/**").permitAll()
+                .requestMatchers("/api/payments/**").permitAll()
                 .anyRequest().authenticated()
             );
         return http.build();
