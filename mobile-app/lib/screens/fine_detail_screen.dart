@@ -32,7 +32,7 @@ class FineDetailScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            fine.categoryName.toUpperCase(),
+                            fine.category.toUpperCase(),
                             style: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
@@ -41,7 +41,7 @@ class FineDetailScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        AmountDisplay(amount: fine.amount),
+                        AmountDisplay(amount: fine.amount.toDouble()),
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
@@ -49,7 +49,7 @@ class FineDetailScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            fine.description,
+                            fine.violationDetails,
                             style: const TextStyle(
                                 fontSize: 12.5, color: AppTheme.textMuted),
                             textAlign: TextAlign.center,
@@ -68,13 +68,13 @@ class FineDetailScreen extends StatelessWidget {
                       children: [
                         InfoRow(label: 'Reference #', value: fine.referenceNumber, bold: true),
                         _divider(),
-                        InfoRow(label: 'Category ID', value: fine.categoryId),
+                        InfoRow(label: 'Violation Date', value: fine.date),
                         _divider(),
-                        InfoRow(label: 'Violation Date', value: fine.violationDate),
-                        _divider(),
-                        InfoRow(label: 'Vehicle Number', value: fine.vehicleNumber, bold: true),
+                        InfoRow(label: 'License Plate', value: fine.licensePlate, bold: true),
                         _divider(),
                         InfoRow(label: 'District', value: fine.district),
+                        _divider(),
+                        InfoRow(label: 'Payment Deadline', value: fine.paymentDeadline),
                       ],
                     ),
                   ),
@@ -100,12 +100,12 @@ class FineDetailScreen extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(fine.officerName,
+                            Text(fine.officer,
                                 style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     color: AppTheme.primary)),
-                            Text('Badge: ${fine.officerBadge}  ·  ${fine.district} District',
+                            Text('${fine.district} District',
                                 style: const TextStyle(
                                     fontSize: 12, color: AppTheme.textMuted)),
                           ],
@@ -152,14 +152,17 @@ class FineDetailScreen extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
             color: AppTheme.surface,
             child: ElevatedButton.icon(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => PaymentScreen(fine: fine)),
-              ),
+              onPressed: fine.status.toUpperCase() == 'PAID'
+                  ? null
+                  : () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => PaymentScreen(fine: fine)),
+                      ),
               icon: const Icon(Icons.payment_rounded, size: 18),
-              label: Text(
-                  'Pay Rs. ${fine.amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',')}'),
+              label: Text(fine.status.toUpperCase() == 'PAID'
+                  ? 'Already Paid'
+                  : 'Pay ${fine.formattedAmount}'),
             ),
           ),
         ],

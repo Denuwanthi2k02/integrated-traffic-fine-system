@@ -112,12 +112,11 @@ const LoginPage = () => {
             </button>
           </form>
 
-          <div className={styles.hint}>
-            <span>Demo: <strong>admin</strong> / <strong>admin123</strong></span>
+          
           </div>
         </div>
       </div>
-    </div>
+   
   )
 }
 

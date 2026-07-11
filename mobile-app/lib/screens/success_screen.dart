@@ -52,7 +52,7 @@ class SuccessScreen extends StatelessWidget {
                             color: AppTheme.primary)),
                     const SizedBox(height: 8),
                     Text(
-                      'An SMS has been sent to ${fine.officerName}.\nYou may retrieve your driving license.',
+                      'An SMS has been sent to ${fine.officer}.\nYou may retrieve your driving license.',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           fontSize: 13.5, color: AppTheme.textMuted, height: 1.5),
@@ -92,10 +92,10 @@ class SuccessScreen extends StatelessWidget {
                               value: fine.referenceNumber),
                           InfoRow(
                               label: 'Violation',
-                              value: fine.categoryName),
-                          InfoRow(label: 'Vehicle', value: fine.vehicleNumber),
+                              value: fine.category),
+                          InfoRow(label: 'Vehicle', value: fine.licensePlate),
                           InfoRow(label: 'District', value: fine.district),
-                          InfoRow(label: 'Officer', value: fine.officerName),
+                          InfoRow(label: 'Officer', value: fine.officer),
                           InfoRow(label: 'Date & Time', value: dateStr),
                           const Divider(
                               height: 1,
@@ -111,7 +111,7 @@ class SuccessScreen extends StatelessWidget {
                                       fontWeight: FontWeight.w600,
                                       color: AppTheme.primary)),
                               Text(
-                                'Rs. ${fine.amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',')}',
+                                fine.formattedAmount,
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,

@@ -41,7 +41,7 @@ public class PaymentController {
 
     @Value("${payhere.currency}")
     private String currency;
--
+
     @Value("${sms.textlk.api.url}")
     private String smsApiUrl;
 
@@ -51,6 +51,7 @@ public class PaymentController {
     @Value("${sms.textlk.sender.id}")
     private String smsSenderId;
 
+   
     @GetMapping("/hash/{amount}/{orderId}")
     public ResponseEntity<String> generateHash(
             @PathVariable String amount,

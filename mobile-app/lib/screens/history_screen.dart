@@ -14,6 +14,7 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   List<FineModel>? _history;
   bool _loading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -22,9 +23,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
-    final data = await ApiService.getPaymentHistory();
-    if (mounted) setState(() { _history = data; _loading = false; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final data = await ApiService.getPaymentHistory();
+      if (mounted) setState(() { _history = data; _loading = false; });
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString().replaceFirst('Exception: ', '');
+          _loading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -32,6 +45,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
     if (_loading) {
       return const Center(
         child: CircularProgressIndicator(color: AppTheme.primary),
+      );
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const Icon(Icons.error_outline_rounded,
+              size: 48, color: AppTheme.textMuted),
+          const SizedBox(height: 12),
+          Text(_error!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppTheme.textMuted, fontSize: 14)),
+          const SizedBox(height: 12),
+          OutlinedButton(onPressed: _load, child: const Text('Retry')),
+        ]),
       );
     }
 
@@ -57,8 +85,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _stat('Total Paid',
-                    'Rs. ${_history!.fold(0.0, (s, f) => s + f.amount).toStringAsFixed(0).replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',')}'),
+                _stat(
+                  'Total Paid',
+                  'Rs. ${_history!.fold<int>(0, (s, f) => s + f.amount).toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',')}',
+                ),
                 Container(width: 0.5, height: 36, color: AppTheme.border),
                 _stat('Fines', _history!.length.toString()),
               ],
@@ -121,19 +151,19 @@ class _HistoryCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(fine.categoryName,
+                  Text(fine.category,
                       style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: AppTheme.primary)),
-                  Text(fine.violationDate,
+                  Text(fine.date,
                       style: const TextStyle(
                           fontSize: 11, color: AppTheme.textMuted)),
                 ]),
               ]),
               Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Text(
-                  'Rs. ${fine.amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',')}',
+                  fine.formattedAmount,
                   style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
@@ -154,7 +184,7 @@ class _HistoryCard extends StatelessWidget {
                       fontSize: 11,
                       color: AppTheme.textMuted,
                       fontFamily: 'monospace')),
-              Text('${fine.district} · ${fine.vehicleNumber}',
+              Text('${fine.district} · ${fine.licensePlate}',
                   style: const TextStyle(
                       fontSize: 11, color: AppTheme.textMuted)),
             ],

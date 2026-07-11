@@ -1,57 +1,72 @@
 class FineModel {
+  final int id;
   final String referenceNumber;
-  final String categoryId;
-  final String categoryName;
-  final double amount;
-  final String officerName;
-  final String officerBadge;
+  final String category;          
   final String district;
-  final String violationDate;
-  final String vehicleNumber;
-  final String status;
-  final String description;
+  final int amount;               
+  final String date;             
+  final String status;           
+  final String officer;          
+  final String licensePlate;
+  final String licenseNumber;
+  final String driverName;
+  final String violationDetails;
+  final String paymentDeadline;
 
   FineModel({
+    required this.id,
     required this.referenceNumber,
-    required this.categoryId,
-    required this.categoryName,
-    required this.amount,
-    required this.officerName,
-    required this.officerBadge,
+    required this.category,
     required this.district,
-    required this.violationDate,
-    required this.vehicleNumber,
+    required this.amount,
+    required this.date,
     required this.status,
-    required this.description,
+    required this.officer,
+    required this.licensePlate,
+    required this.licenseNumber,
+    required this.driverName,
+    required this.violationDetails,
+    required this.paymentDeadline,
   });
 
   factory FineModel.fromJson(Map<String, dynamic> json) => FineModel(
+        id: json['id'] is int
+            ? json['id']
+            : int.tryParse('${json['id'] ?? 0}') ?? 0,
         referenceNumber: json['referenceNumber'] ?? '',
-        categoryId: json['categoryId'] ?? '',
-        categoryName: json['categoryName'] ?? '',
-        amount: (json['amount'] ?? 0).toDouble(),
-        officerName: json['officerName'] ?? '',
-        officerBadge: json['officerBadge'] ?? '',
+        category: json['category'] ?? '',
         district: json['district'] ?? '',
-        violationDate: json['violationDate'] ?? '',
-        vehicleNumber: json['vehicleNumber'] ?? '',
-        status: json['status'] ?? 'pending',
-        description: json['description'] ?? '',
+        amount: json['amount'] is int
+            ? json['amount']
+            : ((json['amount'] as num?)?.toInt() ?? 0),
+        date: json['date'] ?? '',
+        status: (json['status'] ?? 'PENDING').toString(),
+        officer: json['officer'] ?? '',
+        licensePlate: json['licensePlate'] ?? '',
+        licenseNumber: json['licenseNumber'] ?? '',
+        driverName: json['driverName'] ?? '',
+        violationDetails: json['violationDetails'] ?? '',
+        paymentDeadline: json['paymentDeadline'] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'referenceNumber': referenceNumber,
-        'categoryId': categoryId,
-        'categoryName': categoryName,
-        'amount': amount,
-        'officerName': officerName,
-        'officerBadge': officerBadge,
+        'category': category,
         'district': district,
-        'violationDate': violationDate,
-        'vehicleNumber': vehicleNumber,
+        'amount': amount,
+        'date': date,
         'status': status,
-        'description': description,
+        'officer': officer,
+        'licensePlate': licensePlate,
+        'licenseNumber': licenseNumber,
+        'driverName': driverName,
+        'violationDetails': violationDetails,
+        'paymentDeadline': paymentDeadline,
       };
+
+  String get formattedAmount =>
+      'Rs. ${amount.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',')}';
 }
 
 class PaymentModel {

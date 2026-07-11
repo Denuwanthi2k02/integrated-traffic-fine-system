@@ -12,7 +12,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   bool _loading = false;
   bool _obscure = true;
@@ -20,11 +20,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
       final data = await ApiService.login(
-          _usernameCtrl.text.trim(), _passwordCtrl.text.trim());
-      await ApiService.saveToken(data['token'], data['name']);
+          _emailCtrl.text.trim(), _passwordCtrl.text.trim());
+
+      await ApiService.saveSession(
+        token: data['token'] ?? '',
+        name: data['name'] ?? '',
+        licenseNumber: data['licenseNumber'] ?? '',
+      );
+
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -39,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _usernameCtrl.dispose();
+    _emailCtrl.dispose();
     _passwordCtrl.dispose();
     super.dispose();
   }
@@ -131,16 +140,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 16),
                       ],
 
-                      // Username
+                      // Email
                       TextFormField(
-                        controller: _usernameCtrl,
+                        controller: _emailCtrl,
+                        keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(
-                          labelText: 'Username',
-                          prefixIcon: Icon(Icons.person_outline,
+                          labelText: 'Email',
+                          prefixIcon: Icon(Icons.email_outlined,
                               color: AppTheme.textMuted, size: 20),
                         ),
                         validator: (v) =>
-                            v!.isEmpty ? 'Enter your username' : null,
+                            v!.isEmpty ? 'Enter your email' : null,
                       ),
                       const SizedBox(height: 14),
 
@@ -183,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
 
                       const Spacer(),
-                      // Demo hint
+                      // Demo hint — matches DatabaseSeeder.java
                       Center(
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -194,11 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             border:
                                 Border.all(color: AppTheme.border, width: 0.8),
                           ),
-                          child: const Text(
-                            'Demo: driver / driver123',
-                            style: TextStyle(
-                                fontSize: 12, color: AppTheme.textMuted),
-                          ),
+                          
                         ),
                       ),
                     ],

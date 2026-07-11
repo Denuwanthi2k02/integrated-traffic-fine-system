@@ -6,6 +6,7 @@ import '../theme.dart';
 import '../widgets/common_widgets.dart';
 import 'success_screen.dart';
 
+
 class PaymentScreen extends StatefulWidget {
   final FineModel fine;
   const PaymentScreen({super.key, required this.fine});
@@ -25,15 +26,23 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> _pay() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
-      final result = await ApiService.processPayment(PaymentModel(
-        fineReference: widget.fine.referenceNumber,
-        cardHolder: _holderCtrl.text.trim(),
-        cardNumber: _cardCtrl.text.replaceAll(' ', ''),
-        expiry: _expiryCtrl.text.trim(),
-        cvv: _cvvCtrl.text.trim(),
-      ));
+      // NOTE: payments are made against the fine's numeric DB id
+      // (POST /api/driver/fines/{id}/pay), not the reference number.
+      final result = await ApiService.processPayment(
+        widget.fine.id,
+        PaymentModel(
+          fineReference: widget.fine.referenceNumber,
+          cardHolder: _holderCtrl.text.trim(),
+          cardNumber: _cardCtrl.text.replaceAll(' ', ''),
+          expiry: _expiryCtrl.text.trim(),
+          cvv: _cvvCtrl.text.trim(),
+        ),
+      );
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -89,7 +98,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     fontWeight: FontWeight.w600,
                                     color: AppTheme.primary)),
                             const SizedBox(height: 2),
-                            Text(widget.fine.categoryName,
+                            Text(widget.fine.category,
                                 style: const TextStyle(
                                     fontSize: 12, color: AppTheme.textMuted)),
                           ],
@@ -100,7 +109,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 style: TextStyle(
                                     fontSize: 11, color: AppTheme.textMuted)),
                             Text(
-                              'Rs. ${widget.fine.amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',')}',
+                              widget.fine.formattedAmount,
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
@@ -251,7 +260,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     onPressed: _loading ? null : _pay,
                     icon: const Icon(Icons.lock_rounded, size: 18),
                     label: Text(
-                      'Pay Rs. ${widget.fine.amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',')} Securely',
+                      'Pay ${widget.fine.formattedAmount} Securely',
                     ),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.success),

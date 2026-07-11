@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
-import '../models/fine_model.dart';
 import '../theme.dart';
 import '../widgets/common_widgets.dart';
 import 'fine_detail_screen.dart';
@@ -22,7 +21,10 @@ class _FineLookupScreenState extends State<FineLookupScreen> {
 
   Future<void> _lookup() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
       final fine = await ApiService.lookupFine(
         _refCtrl.text.trim().toUpperCase(),
@@ -82,7 +84,7 @@ class _FineLookupScreenState extends State<FineLookupScreen> {
                                   color: Color(0xFF1D4ED8))),
                           SizedBox(height: 4),
                           Text(
-                            'Enter the reference number and category ID from your fine slip issued by the traffic officer.',
+                            'Enter the reference number and category from your fine slip issued by the traffic officer.',
                             style: TextStyle(
                                 fontSize: 12, color: Color(0xFF1E40AF)),
                           ),
@@ -134,29 +136,30 @@ class _FineLookupScreenState extends State<FineLookupScreen> {
                       textCapitalization: TextCapitalization.characters,
                       decoration: const InputDecoration(
                         labelText: 'Fine Reference Number',
-                        hintText: 'e.g. TF-2026-4821',
+                        hintText: 'e.g. SLP-882291',
                         prefixIcon: Icon(Icons.tag_rounded,
                             color: AppTheme.textMuted, size: 20),
-                        helperText: 'Found at the top of your fine slip',
+                       
                       ),
                       validator: (v) =>
                           v!.isEmpty ? 'Enter the reference number' : null,
                     ),
                     const SizedBox(height: 14),
 
-                    // Category ID
+                    // Category — must match the value stored in the DB
+                    // (Fine.category), e.g. SPEED, DRUNK, LICENSE.
                     TextFormField(
                       controller: _catCtrl,
                       textCapitalization: TextCapitalization.characters,
                       decoration: const InputDecoration(
-                        labelText: 'Category ID',
-                        hintText: 'e.g. CAT-001',
+                        labelText: 'Category',
+                        hintText: 'e.g. SPEED',
                         prefixIcon: Icon(Icons.category_outlined,
                             color: AppTheme.textMuted, size: 20),
-                        helperText: 'Found below the reference number',
+                        
                       ),
                       validator: (v) =>
-                          v!.isEmpty ? 'Enter the category ID' : null,
+                          v!.isEmpty ? 'Enter the category' : null,
                     ),
                     const SizedBox(height: 24),
 
@@ -170,17 +173,6 @@ class _FineLookupScreenState extends State<FineLookupScreen> {
               ),
 
               const SizedBox(height: 32),
-
-              // ── Quick test cards ──
-              const SectionHeader(title: 'DEMO — QUICK FILL'),
-              _quickFillCard(
-                'TF-2026-4821', 'CAT-001', 'Speeding', 'Rs. 3,000'),
-              const SizedBox(height: 8),
-              _quickFillCard(
-                'TF-2026-4820', 'CAT-002', 'No License', 'Rs. 5,000'),
-              const SizedBox(height: 8),
-              _quickFillCard(
-                'TF-2026-4818', 'CAT-003', 'Drunk Driving', 'Rs. 25,000'),
             ],
           ),
         ),
